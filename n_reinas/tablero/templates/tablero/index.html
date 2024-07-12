@@ -1,0 +1,132 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de las N Reinas</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- Custom styles -->
+    <style>
+        .board {
+            margin-top: 20px;
+        }
+        .board table {
+            margin: 0 auto;
+            border-collapse: collapse;
+        }
+        .board table td {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #ccc;
+        }
+        .board table img {
+            width: 30px;
+            height: 30px;
+        }
+        .solution-text {
+            margin-top: 10px;
+        }
+        .step-container, .solution-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .step, .solution {
+            margin: 10px;
+            padding: 10px;
+        }
+        .solution-step {
+            border: 2px solid red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <h1 class="text-center mt-4">Juego de las N Reinas</h1>
+                <form method="POST" action="{% url 'index' %}" class="mt-4">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="n">Número de reinas:</label>
+                        <input type="number" id="n" name="n" class="form-control" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Resolver</button>
+                </form>
+
+                <div class="board mt-4">
+                    {% if pasos %}
+                    <h2 class="text-center">Pasos:</h2>
+                    <div class="step-container">
+                        {% for paso in pasos %}
+                        <div class="step {% if paso.is_solution %}solution-step{% endif %}">
+                            <h3 class="text-center">{{ forloop.counter }}</h3>
+                            <table class="mx-auto">
+                                {% for row in paso.tablero %}
+                                <tr>
+                                    {% for cell in row %}
+                                    <td>
+                                        {% if cell == '|R|' %}
+                                        <img src="{% static 'tablero/queen.png' %}" alt="Reina">
+                                        {% else %}
+                                        <img src="{% static 'tablero/empty.png' %}" alt="Cuadro vacío">
+                                        {% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <h2 class="text-center mt-4">
+                        {% if has_solution %}
+                        ¡Se encontró solución para {{ n }} reinas!
+                        {% else %}
+                        No se encontró una solución para {{ n }} reinas.
+                        {% endif %}
+                    </h2>
+
+                    {% if soluciones %}
+                    <h2 class="text-center">Soluciones:</h2>
+                    <div class="solution-container">
+                        {% for solucion in soluciones %}
+                        <div class="solution">
+                            <h3 class="text-center">Solución {{ forloop.counter }}</h3>
+                            <table class="mx-auto">
+                                {% for row in solucion %}
+                                <tr>
+                                    {% for cell in row %}
+                                    <td>
+                                        {% if cell == '|R|' %}
+                                        <img src="{% static 'tablero/queen.png' %}" alt="Reina">
+                                        {% else %}
+                                        <img src="{% static 'tablero/empty.png' %}" alt="Cuadro vacío">
+                                        {% endif %}
+                                    </td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies (jQuery, Popper.js) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js" integrity="sha384-L2GmIox0fWY2byExuJYjSmEzvOd+3PmZDsL2gzY5NYdNtnY2Fw5tSvK1zzQeDEJB" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8sh+py2eAtCWrjI2WrB7K/B0QFni2vFvuZtbJ8" crossorigin="anonymous"></script>
+</body>
+</html>
